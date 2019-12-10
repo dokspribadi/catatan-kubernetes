@@ -1,0 +1,18 @@
+#Eksekusi as normal user
+jembus@node1:~$ sudo ls
+jembus@node1:~$ su
+Password: 
+root@node1:/home/jembus#
+root@node1:/home/jembus# cat <<EOF > /etc/sudoers.d/jembus
+> jembus ALL=(ALL) ALL
+> EOF
+root@node1:/home/jembus# chmod 440 /etc/sudoers.d/jembus
+root@node1:/home/jembus# exit
+exit
+jembus@node1:~$ ls
+jembus@node1:~$ vim .bashrc
+PATH=$PATH:/usr/sbin:/sbin
+
+
+
+

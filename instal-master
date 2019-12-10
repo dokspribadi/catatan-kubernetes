@@ -3,6 +3,10 @@ jembus@master:~$
 jembus@master:~$ sudo -i
 root@master:~# apt-get update && apt-get upgrade -y
 root@master:~# apt-get install apt-transport-https ca-certificates curl software-properties-common -y
+root@master:~# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+OK
+root@master:~# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+OK
 root@master:~# add-apt-repository \
   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) \
@@ -27,10 +31,6 @@ root@master:~# systemctl daemon-reload
 root@master:~# systemctl restart docker
 root@master:~# vim /etc/apt/sources.list.d/kubernetes.list
 deb http://apt.kubernetes.io/ kubernetes-xenial main
-root@master:~# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-OK
-root@master:~# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-OK
 root@master:~# apt-get update
 root@master:~# apt-get install -y kubeadm=1.12.1-00 kubelet=1.12.1-00 kubectl=1.12.1-00 #-->yang ini pakai spesifik versinya [OPTIONAL]
 root@master:~# apt-get install -y kubeadm kubelet kubectl

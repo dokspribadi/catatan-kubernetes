@@ -1,0 +1,52 @@
+root@worker:~# apt-get update && apt-get upgrade -y
+root@worker:~# apt-get install apt-transport-https ca-certificates curl software-properties-common -y
+root@worker:~# add-apt-repository \
+  "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) \
+  stable"
+root@worker:~# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+OK
+root@worker:~# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+OK
+root@worker:~# apt-get install -y docker.io ### OPTIONAL BISA PAKAI JUGA DOCKER CE -- COMMAND DIBAWAH INI
+root@worker:~# apt-get update && apt-get install \
+  containerd.io=1.2.10-3 \
+  docker-ce=5:19.03.4~3-0~ubuntu-$(lsb_release -cs) \
+  docker-ce-cli=5:19.03.4~3-0~ubuntu-$(lsb_release -cs)
+root@worker:~# at > /etc/docker/daemon.json <<EOF
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}
+EOF
+root@worker:~# mkdir -p /etc/systemd/system/docker.service.d
+root@worker:~# systemctl daemon-reload
+root@worker:~# systemctl restart docker
+root@worker:~# vim /etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+root@worker:~# apt-get update
+root@worker:~# apt-get install -y kubeadm=1.12.1-00 kubelet=1.12.1-00 kubectl=1.12.1-00 #-->yang ini pakai spesifik versinya [OPTIONAL]
+root@worker:~# apt-get install -y kubeadm kubelet kubectl
+
+#Eksekusi as normal user di master
+jembus@master:~$ ip addr show ens4 | grep inet
+jembus@master:~$ sudo kubeadm token list
+jembus@master:~$ sudo kubeadm token create
+token1
+jembus@master:~$ openssl x509 -pubkey \
+-in /etc/kubernetes/pki/ca.crt | openssl rsa \
+-pubin -outform der 2>/dev/null | openssl dgst \
+-sha256 -hex | sed 's/^.* //'
+token2
+
+# balik ke root worker
+root@worker:~# kubeadm join \
+--token token1 \
+ipmaster:6443 \
+--discovery-token-ca-cert-hash \
+sha256:token2
+root@worker:~# exit

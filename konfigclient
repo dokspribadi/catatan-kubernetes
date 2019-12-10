@@ -1,0 +1,14 @@
+jembus@master:~$
+jembus@master:~$ mkdir -p $HOME/.kube
+jembus@master:~$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+jembus@master:~$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+jembus@master:~$ less .kube/config
+jembus@master:~$ sudo cp /root/rbac-kdd.yaml .
+jembus@master:~$ kubectl apply -f rbac-kdd.yaml
+jembus@master:~$ sudo cp /root/calico.yaml .
+jembus@master:~$ kubectl apply -f calico.yaml
+jembus@master:~$ source <(kubectl completion bash)
+jembus@master:~$ echo "source <(kubectl completion bash)" >> ~/.bashrc
+jembus@master:~$ kubectl des<Tab> n<Tab><Tab> test-<Tab>
+jembus@master:~$ kubectl -n kube-s<Tab> g<Tab> po e<Tab>
+
